@@ -43,6 +43,10 @@
 		"stop": "停止",
 		"cancel": "取消",
 		"more": "更多",
+		"enableFocusMode": "Enable focus mode",
+		"disableFocusMode": "Disable focus mode",
+		"focusModeUnavailable": "Focus mode unavailable on this platform",
+		"focusModeError": "Failed to change focus mode",
 		"update": {
 			"update": "更新",
 			"updated": "已更新",

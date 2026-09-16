@@ -43,6 +43,10 @@
 		"stop": "Arrêter",
 		"cancel": "Annuler",
 		"more": "Plus",
+		"enableFocusMode": "Enable focus mode",
+		"disableFocusMode": "Disable focus mode",
+		"focusModeUnavailable": "Focus mode unavailable on this platform",
+		"focusModeError": "Failed to change focus mode",
 		"update": {
 			"update": "Mettre à jour",
 			"updated": "Mis à jour",
