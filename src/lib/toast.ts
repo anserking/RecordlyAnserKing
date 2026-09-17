@@ -7,7 +7,10 @@
  *
  * The API surface mirrors the subset of sonner's `toast` that is used
  * across this codebase: the base call plus `.success`, `.error`, `.info`,
- * `.warning`, `.loading`, `.promise`, and `.dismiss`.
+ * `.warning`, `.loading`, `.promise`, `.custom`, `.message`, and `.dismiss`.
+ *
+ * `.errorAlways` bypasses suppression for critical control errors (e.g.
+ * focus-mode toggle failures) that must always be visible to the user.
  */
 
 import { toast as sonnerToast } from "sonner";
@@ -58,9 +61,24 @@ maybeToast.promise = ((...args: Parameters<SonnerToast["promise"]>) => {
 	return sonnerToast.promise(...args);
 }) as SonnerToast["promise"];
 
+maybeToast.custom = ((...args: Parameters<SonnerToast["custom"]>) => {
+	if (isFocusModeEnabled()) return noop();
+	return sonnerToast.custom(...args);
+}) as SonnerToast["custom"];
+
+maybeToast.message = ((...args: Parameters<SonnerToast["message"]>) => {
+	if (isFocusModeEnabled()) return noop();
+	return sonnerToast.message(...args);
+}) as SonnerToast["message"];
+
 maybeToast.dismiss = sonnerToast.dismiss;
-maybeToast.custom = sonnerToast.custom;
-maybeToast.message = sonnerToast.message;
+
+/**
+ * Like `toast.error` but always shows the toast regardless of focus mode.
+ * Use only for critical control errors that the user must see
+ * (e.g. the focus-mode toggle itself failing).
+ */
+maybeToast.errorAlways = sonnerToast.error;
 
 /** Focus-mode-aware drop-in replacement for sonner's `toast`. */
 export const toast = maybeToast;

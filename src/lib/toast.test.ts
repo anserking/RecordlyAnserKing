@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { isFocusModeEnabled, setFocusModeEnabledRef } from "./focusMode";
-import { toast } from "./toast";
 import { toast as sonnerToast } from "sonner";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { isFocusModeEnabled, setFocusModeEnabledRef, setFocusModeInitialized } from "./focusMode";
+import { toast } from "./toast";
 
 vi.mock("sonner", () => ({
 	toast: Object.assign(vi.fn(), {
@@ -20,6 +20,7 @@ vi.mock("sonner", () => ({
 describe("toast wrapper with focus mode", () => {
 	beforeEach(() => {
 		setFocusModeEnabledRef(false);
+		setFocusModeInitialized();
 		vi.clearAllMocks();
 	});
 

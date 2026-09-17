@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { setFocusModeEnabledRef } from "../../../lib/focusMode";
-import { toast } from "../../../lib/toast";
 import { useScopedT } from "../../../contexts/I18nContext";
+import { setFocusModeEnabledRef, setFocusModeInitialized } from "../../../lib/focusMode";
+import { toast } from "../../../lib/toast";
 
 /**
  * Manages focus-mode state for the HUD.
@@ -34,6 +34,8 @@ export function useFocusMode() {
 				const result = await window.electronAPI?.getFocusModeStatus?.();
 				if (!cancelled && result?.success) {
 					applyState(result.enabled, result.supported);
+					// Mark as initialized so toast suppression activates from this point.
+					setFocusModeInitialized();
 				}
 			} catch (error) {
 				console.error("[useFocusMode] Failed to load focus mode status:", error);
@@ -74,12 +76,14 @@ export function useFocusMode() {
 				applyState(result.enabled, result.supported);
 			} else {
 				// Revert to the last known-good state; the ref is already correct.
+				// Use errorAlways so this control error is visible even when focus
+				// mode is currently active.
 				const errorMsg = result?.error ?? t("recording.focusModeError");
-				toast.error(errorMsg);
+				toast.errorAlways(errorMsg);
 			}
 		} catch (error) {
 			console.error("[useFocusMode] Failed to toggle focus mode:", error);
-			toast.error(t("recording.focusModeError"));
+			toast.errorAlways(t("recording.focusModeError"));
 		} finally {
 			setFocusModeLoading(false);
 		}

@@ -8,13 +8,19 @@
  *
  * Keeping state here — rather than only in React — avoids having to thread
  * the flag through every component that might show a toast.
+ *
+ * `_initialized` starts as `false` so that toasts are never suppressed
+ * during early startup (before the persisted status has been fetched from
+ * the main process). The hook sets it to `true` once the first
+ * `getFocusModeStatus` response is received.
  */
 
 let _focusModeEnabled = false;
+let _initialized = false;
 
-/** Returns true when focus mode is currently active. */
+/** Returns true when focus mode is currently active AND the status has been initialized. */
 export function isFocusModeEnabled(): boolean {
-	return _focusModeEnabled;
+	return _initialized && _focusModeEnabled;
 }
 
 /**
@@ -23,4 +29,13 @@ export function isFocusModeEnabled(): boolean {
  */
 export function setFocusModeEnabledRef(enabled: boolean): void {
 	_focusModeEnabled = enabled;
+}
+
+/**
+ * Called by `useFocusMode` once the initial `getFocusModeStatus` response
+ * succeeds. Until this is called, `isFocusModeEnabled()` returns `false`
+ * so that early-startup toasts are never accidentally suppressed.
+ */
+export function setFocusModeInitialized(): void {
+	_initialized = true;
 }

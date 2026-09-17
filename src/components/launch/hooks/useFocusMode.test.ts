@@ -9,13 +9,16 @@ vi.mock("../../../contexts/I18nContext", () => ({
 vi.mock("../../../lib/toast", () => ({
 	toast: {
 		error: vi.fn(),
+		errorAlways: vi.fn(),
 	},
 }));
 
 // Mock focusMode ref module
 const setFocusModeEnabledRefMock = vi.fn();
+const setFocusModeInitializedMock = vi.fn();
 vi.mock("../../../lib/focusMode", () => ({
 	setFocusModeEnabledRef: (val: boolean) => setFocusModeEnabledRefMock(val),
+	setFocusModeInitialized: () => setFocusModeInitializedMock(),
 }));
 
 // Custom minimal hook runner to simulate React lifecycle in Node
@@ -64,6 +67,7 @@ describe("useFocusMode hook", () => {
 		listenerCallback = null;
 		unsubscribeMock.mockClear();
 		setFocusModeEnabledRefMock.mockClear();
+		setFocusModeInitializedMock.mockClear();
 
 		mockGetFocusModeStatus = vi.fn().mockResolvedValue({
 			success: true,
@@ -100,6 +104,7 @@ describe("useFocusMode hook", () => {
 		stateIndex = 0;
 		effectCallbacks = [];
 		const { useFocusMode } = await import("./useFocusMode");
+		// biome-ignore lint/correctness/useHookAtTopLevel: runHook is a test-only hook runner, not a React component
 		const hookResult = useFocusMode();
 
 		// Run mounted effects
@@ -164,6 +169,6 @@ describe("useFocusMode hook", () => {
 		const result = await runHook();
 		await result.toggleFocusMode();
 
-		expect(toast.error).toHaveBeenCalledWith("Custom error message");
+		expect(toast.errorAlways).toHaveBeenCalledWith("Custom error message");
 	});
 });
